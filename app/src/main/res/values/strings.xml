@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">JsonTypicodeUsers</string>
+    <string name="users">Users</string>
 </resources>

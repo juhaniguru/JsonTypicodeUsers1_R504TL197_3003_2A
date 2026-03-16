@@ -3,6 +3,10 @@ package com.example.jsontypicodeusers.presentation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -45,7 +49,25 @@ fun UsersScreen(modifier: Modifier = Modifier, state: UsersState) {
                 .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
-            Text("Sisältö!!")
+            when {
+                state.loading -> CircularProgressIndicator()
+                state.error != null -> Text(state.error)
+                else -> UsersList(users = state.items)
+            }
+        }
+    }
+}
+
+@Composable
+fun UsersList(modifier: Modifier = Modifier, users: List<User>) {
+
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        items(items=users, key = { user ->
+            user.id
+        }) { user ->
+            ElevatedCard(modifier = Modifier.fillParentMaxWidth()) {
+                Text(user.email)
+            }
         }
     }
 }

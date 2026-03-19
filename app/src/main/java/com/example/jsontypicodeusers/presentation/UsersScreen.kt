@@ -26,7 +26,7 @@ import com.example.jsontypicodeusers.ui.theme.JsonTypicodeUsersTheme
 
 @Composable
 fun UsersScreenRoot(modifier: Modifier = Modifier) {
-    val vm = viewModel<UsersViewModel>()
+    val vm = viewModel<UsersViewModel>(factory = UsersViewModel.createFactory())
     val state by vm.state.collectAsStateWithLifecycle()
     //val state = vm.state.collectAsStateWithLifecycle().value
 

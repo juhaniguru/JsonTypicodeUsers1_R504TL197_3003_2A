@@ -1,15 +1,27 @@
 package com.example.jsontypicodeusers.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.jsontypicodeusers.domain.JsonTypiCodeAPI
 import com.example.jsontypicodeusers.domain.typiCodeService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class UsersViewModel : ViewModel() {
+class UsersViewModel(private val api: JsonTypiCodeAPI) : ViewModel() {
 
+    companion object {
+        fun createFactory(): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                UsersViewModel(typiCodeService)
+            }
+        }
+
+    }
 
 
     private val _state = MutableStateFlow(UsersState())
@@ -21,8 +33,6 @@ class UsersViewModel : ViewModel() {
     }
 
 
-
-
     fun getAllUsers() {
         viewModelScope.launch {
             try {
@@ -32,7 +42,7 @@ class UsersViewModel : ViewModel() {
                 }
 
 
-                val users = typiCodeService.getUsers()
+                val users = api.getUsers()
                 _state.update { currentState ->
                     currentState.copy(items = users)
                 }

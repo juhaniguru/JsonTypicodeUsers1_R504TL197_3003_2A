@@ -1,5 +1,8 @@
 package com.example.jsontypicodeusers.presentation
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,14 +49,21 @@ fun UsersScreenRoot(modifier: Modifier = Modifier, onMenuOpen: () -> Unit) {
     val state by vm.state.collectAsStateWithLifecycle()
     //val state = vm.state.collectAsStateWithLifecycle().value
 
-    UsersScreen(state = state, onMenuOpen = onMenuOpen)
+    UsersScreen(state = state, onMenuOpen = onMenuOpen, onRemoveUser = { userId ->
+        vm.deleteUser(userId)
+    })
 
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UsersScreen(modifier: Modifier = Modifier, state: UsersState, onMenuOpen : () -> Unit) {
+fun UsersScreen(
+    modifier: Modifier = Modifier,
+    state: UsersState,
+    onMenuOpen: () -> Unit,
+    onRemoveUser: (Int) -> Unit
+) {
     Scaffold(topBar = {
         TopAppBar(
             navigationIcon = {
@@ -79,20 +89,27 @@ fun UsersScreen(modifier: Modifier = Modifier, state: UsersState, onMenuOpen : (
             when {
                 state.loading -> CircularProgressIndicator()
                 state.error != null -> Text(state.error)
-                else -> UsersList(users = state.items)
+                else -> UsersList(users = state.items, onRemoveUser = onRemoveUser)
             }
         }
     }
 }
 
 @Composable
-fun UsersList(modifier: Modifier = Modifier, users: List<User>) {
+fun UsersList(modifier: Modifier = Modifier, users: List<User>, onRemoveUser: (Int) -> Unit) {
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(items = users, key = { user ->
             user.id
         }) { user ->
-            UserCard(user = user)
+            Box(
+                modifier = Modifier.animateItem(
+                    fadeOutSpec = tween(300),
+                    placementSpec = spring(stiffness = Spring.StiffnessLow))
+                ) {
+                UserCard(user=user, onRemoveUser = onRemoveUser)
+            }
+
         }
     }
 }
@@ -100,8 +117,9 @@ fun UsersList(modifier: Modifier = Modifier, users: List<User>) {
 @Composable
 fun UserCard(
     user: User,
+    onRemoveUser: (Int) -> Unit
 
-    ) {
+) {
     ElevatedCard(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -143,7 +161,9 @@ fun UserCard(
             }
 
 
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                onRemoveUser(user.id)
+            }) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete User",
@@ -159,7 +179,7 @@ fun UserCard(
 @Composable
 private fun UsersScreenPreview() {
     JsonTypicodeUsersTheme {
-        UsersScreen(state = UsersState(), onMenuOpen = {})
+        UsersScreen(state = UsersState(), onMenuOpen = {}, onRemoveUser = {})
     }
 }
 

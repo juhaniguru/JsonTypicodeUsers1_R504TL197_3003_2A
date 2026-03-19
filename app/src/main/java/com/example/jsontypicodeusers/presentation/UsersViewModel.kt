@@ -42,9 +42,7 @@ class UsersViewModel(private val api: JsonTypiCodeAPI) : ViewModel() {
 
                     })
                 }
-            } catch(e: Exception) {} finally {
-
-            }
+            } catch(e: Exception) {}
         }
     }
 

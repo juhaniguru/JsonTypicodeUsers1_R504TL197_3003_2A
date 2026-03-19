@@ -4,7 +4,9 @@ import com.example.jsontypicodeusers.presentation.User
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Path
 
 private val api = Retrofit.Builder()
     .baseUrl("https://jsonplaceholder.typicode.com/")
@@ -14,6 +16,9 @@ interface JsonTypiCodeAPI {
     // GET:: https://jsonplaceholder.typicode.com/users
     @GET("users")
     suspend fun getUsers() : List<User>
+
+    @DELETE("users/{id}")
+    suspend fun deleteUser(@Path("id") id: Int)
 
 }
 

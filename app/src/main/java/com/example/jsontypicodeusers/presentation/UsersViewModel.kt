@@ -32,6 +32,22 @@ class UsersViewModel(private val api: JsonTypiCodeAPI) : ViewModel() {
         getAllUsers()
     }
 
+    fun deleteUser(id: Int) {
+        viewModelScope.launch {
+            try {
+                api.deleteUser(id)
+                _state.update { currentState ->
+                    currentState.copy(items= currentState.items.filter { user ->
+                        user.id != id
+
+                    })
+                }
+            } catch(e: Exception) {} finally {
+
+            }
+        }
+    }
+
 
     fun getAllUsers() {
         viewModelScope.launch {

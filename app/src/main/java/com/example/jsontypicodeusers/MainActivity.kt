@@ -41,6 +41,7 @@ class MainActivity : ComponentActivity() {
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val navController = rememberNavController()
                 val scope = rememberCoroutineScope()
+                val currentDestination = navController.currentBackStackEntry?.destination
 
                 ModalNavigationDrawer(
 
@@ -59,8 +60,15 @@ class MainActivity : ComponentActivity() {
                                         contentDescription = stringResource(R.string.users)
                                     )
                                 },
-                                onClick = {},
-                                selected = true
+                                onClick = {
+                                    navController.navigate("users") {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            inclusive = true
+                                        }
+                                        launchSingleTop = true
+                                    }
+                                },
+                                selected = currentDestination?.route == "users"
                             )
                         }
                     }, drawerState = drawerState

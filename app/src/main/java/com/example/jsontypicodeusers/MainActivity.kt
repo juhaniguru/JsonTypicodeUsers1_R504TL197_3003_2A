@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,6 +29,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.jsontypicodeusers.presentation.UsersScreenRoot
 import com.example.jsontypicodeusers.ui.theme.JsonTypicodeUsersTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +40,7 @@ class MainActivity : ComponentActivity() {
 
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val navController = rememberNavController()
+                val scope = rememberCoroutineScope()
 
                 ModalNavigationDrawer(
 
@@ -69,7 +72,12 @@ class MainActivity : ComponentActivity() {
 
                         ) {
                         composable("users") {
-                            UsersScreenRoot()
+                            UsersScreenRoot(onMenuOpen = {
+                                scope.launch {
+                                    drawerState.open()
+                                }
+
+                            })
                         }
                     }
                 }

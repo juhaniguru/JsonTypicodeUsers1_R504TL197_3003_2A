@@ -2,4 +2,7 @@
     <string name="app_name">JsonTypicodeUsers</string>
     <string name="users">Users</string>
     <string name="open_menu">Open Menu</string>
+    <string name="add_new_user">Add New User</string>
+    <string name="back">Back</string>
+    <string name="create_user">Create User</string>
 </resources>

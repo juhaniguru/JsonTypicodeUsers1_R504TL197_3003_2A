@@ -57,7 +57,7 @@ class UsersViewModel(private val api: JsonTypiCodeAPI) : ViewModel() {
         }
     }
 
-
+    // TODO: navigoi takaisin usersScreeniin onnistuneen käyttäjän lisäyksen jälkeen
     fun createUser() {
 
         try {

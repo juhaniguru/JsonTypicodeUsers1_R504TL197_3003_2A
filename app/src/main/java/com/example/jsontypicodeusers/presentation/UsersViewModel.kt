@@ -36,6 +36,10 @@ class UsersViewModel(private val api: JsonTypiCodeAPI) : ViewModel() {
         getAllUsers()
     }
 
+    fun updateEmail(newEmail: String) {
+        _addUserState.update { currentState -> currentState.copy(email = newEmail) }
+    }
+
     fun deleteUser(id: Int) {
         viewModelScope.launch {
             try {

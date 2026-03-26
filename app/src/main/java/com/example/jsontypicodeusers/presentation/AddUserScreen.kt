@@ -47,14 +47,17 @@ fun AddUserScreenRoot(modifier: Modifier = Modifier) {
 
     val state by viewmodel.addUserState.collectAsStateWithLifecycle()
 
-    AddUserScreen(onBackClick = {}, state = state)
+    AddUserScreen(onBackClick = {}, state = state, onEmailChange = {
+        viewmodel.updateEmail(it)
+    })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddUserScreen(
     onBackClick: () -> Unit,
-    state: AddUserState
+    state: AddUserState,
+    onEmailChange : (String) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -82,9 +85,9 @@ fun AddUserScreen(
 
             OutlinedTextField(
                 // tämä data tulee viewmodelista
-                value = "",
+                value = state.email,
                 // tähän lisätään lambda, joka tulee olemaan viewmodelissa
-                onValueChange = { },
+                onValueChange = { newText -> onEmailChange(newText) },
                 label = { Text("Email Address") },
                 placeholder = { Text("example@domain.com") },
                 modifier = Modifier.fillMaxWidth(),
@@ -118,5 +121,5 @@ fun AddUserScreen(
 @Preview(showBackground = true)
 @Composable
 private fun AddUserScreenPreview() {
-    AddUserScreen(onBackClick = {}, state = AddUserState())
+    AddUserScreen(onBackClick = {}, state = AddUserState(), onEmailChange = {})
 }

@@ -23,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jsontypicodeusers.R
 
@@ -43,12 +45,16 @@ fun AddUserScreenRoot(modifier: Modifier = Modifier) {
     // nyt samasta viewmodelista tehdään toinen instanssi
     val viewmodel = viewModel<UsersViewModel>(factory = UsersViewModel.createFactory())
 
+    val state by viewmodel.addUserState.collectAsStateWithLifecycle()
+
+    AddUserScreen(onBackClick = {}, state = state)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddUserScreen(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    state: AddUserState
 ) {
     Scaffold(
         topBar = {
@@ -112,5 +118,5 @@ fun AddUserScreen(
 @Preview(showBackground = true)
 @Composable
 private fun AddUserScreenPreview() {
-    AddUserScreen(onBackClick = {})
+    AddUserScreen(onBackClick = {}, state = AddUserState())
 }

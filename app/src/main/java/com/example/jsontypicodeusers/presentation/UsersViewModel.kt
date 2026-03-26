@@ -27,6 +27,10 @@ class UsersViewModel(private val api: JsonTypiCodeAPI) : ViewModel() {
     private val _state = MutableStateFlow(UsersState())
     val state = _state.asStateFlow()
 
+    private val _addUserState = MutableStateFlow(AddUserState())
+
+    val addUserState = _addUserState.asStateFlow()
+
 
     init {
         getAllUsers()

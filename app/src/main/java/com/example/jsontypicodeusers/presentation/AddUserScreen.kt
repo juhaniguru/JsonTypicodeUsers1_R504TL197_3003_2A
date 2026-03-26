@@ -39,7 +39,7 @@ import com.example.jsontypicodeusers.R
 // AddUserScreen
 
 @Composable
-fun AddUserScreenRoot(modifier: Modifier = Modifier) {
+fun AddUserScreenRoot(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
     // meiltä puuttuu vielä viewmodelista sopiva data class, jossa käsitellään tämän screenin tilaa
 
     // nyt samasta viewmodelista tehdään toinen instanssi
@@ -47,8 +47,10 @@ fun AddUserScreenRoot(modifier: Modifier = Modifier) {
 
     val state by viewmodel.addUserState.collectAsStateWithLifecycle()
 
-    AddUserScreen(onBackClick = {}, state = state, onEmailChange = {
+    AddUserScreen(onBackClick = onBackClick, state = state, onEmailChange = {
         viewmodel.updateEmail(it)
+    }, onUserCreate = {
+        viewmodel.createUser()
     })
 }
 
@@ -57,7 +59,8 @@ fun AddUserScreenRoot(modifier: Modifier = Modifier) {
 fun AddUserScreen(
     onBackClick: () -> Unit,
     state: AddUserState,
-    onEmailChange : (String) -> Unit
+    onEmailChange: (String) -> Unit,
+    onUserCreate: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -104,7 +107,7 @@ fun AddUserScreen(
 
             Button(
                 // tämä tulee viewmodelista
-                onClick = { },
+                onClick = { onUserCreate() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -121,5 +124,5 @@ fun AddUserScreen(
 @Preview(showBackground = true)
 @Composable
 private fun AddUserScreenPreview() {
-    AddUserScreen(onBackClick = {}, state = AddUserState(), onEmailChange = {})
+    AddUserScreen(onBackClick = {}, state = AddUserState(), onEmailChange = {}, onUserCreate = {})
 }

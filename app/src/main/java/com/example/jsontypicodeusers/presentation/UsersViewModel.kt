@@ -1,5 +1,6 @@
 package com.example.jsontypicodeusers.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -33,6 +34,7 @@ class UsersViewModel(private val api: JsonTypiCodeAPI) : ViewModel() {
 
 
     init {
+        Log.d("juhanitestaa", "UsersViewModel::${hashCode()}")
         getAllUsers()
     }
 
@@ -45,12 +47,32 @@ class UsersViewModel(private val api: JsonTypiCodeAPI) : ViewModel() {
             try {
                 api.deleteUser(id)
                 _state.update { currentState ->
-                    currentState.copy(items= currentState.items.filter { user ->
+                    currentState.copy(items = currentState.items.filter { user ->
                         user.id != id
 
                     })
                 }
-            } catch(e: Exception) {}
+            } catch (e: Exception) {
+            }
+        }
+    }
+
+
+    fun createUser() {
+
+        try {
+            _addUserState.update { currentState -> currentState.copy(isAdding = true) }
+            viewModelScope.launch {
+                val newUser = api.createUser(AddUserReq(email = addUserState.value.email))
+                _state.update { currentState ->
+                    currentState.copy(
+                        items = state.value.items + newUser
+                    )
+                }
+            }
+        } catch (e: Exception) {
+        } finally {
+            _addUserState.update { currentState -> currentState.copy(isAdding = false) }
         }
     }
 

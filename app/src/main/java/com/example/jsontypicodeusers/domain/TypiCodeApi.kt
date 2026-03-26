@@ -1,11 +1,14 @@
 package com.example.jsontypicodeusers.domain
 
+import com.example.jsontypicodeusers.presentation.AddUserReq
 import com.example.jsontypicodeusers.presentation.User
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 
 private val api = Retrofit.Builder()
@@ -19,6 +22,9 @@ interface JsonTypiCodeAPI {
 
     @DELETE("users/{id}")
     suspend fun deleteUser(@Path("id") id: Int)
+
+    @POST("users")
+    suspend fun createUser(@Body newUser: AddUserReq) : User
 
 }
 

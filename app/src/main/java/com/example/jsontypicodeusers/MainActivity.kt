@@ -91,7 +91,9 @@ class MainActivity : ComponentActivity() {
                             })
                         }
                         composable(route = "addUser") {
-                            AddUserScreenRoot()
+                            AddUserScreenRoot(onBackClick = {
+                                navController.navigateUp()
+                            })
                         }
                     }
                 }

@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.jsontypicodeusers.presentation.AddUserScreenRoot
 import com.example.jsontypicodeusers.presentation.UsersScreenRoot
 import com.example.jsontypicodeusers.ui.theme.JsonTypicodeUsersTheme
 import kotlinx.coroutines.launch
@@ -85,7 +86,12 @@ class MainActivity : ComponentActivity() {
                                     drawerState.open()
                                 }
 
+                            }, onNavigate = {
+                                navController.navigate("addUser")
                             })
+                        }
+                        composable(route = "addUser") {
+                            AddUserScreenRoot()
                         }
                     }
                 }

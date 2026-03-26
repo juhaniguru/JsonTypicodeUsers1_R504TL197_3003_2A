@@ -47,14 +47,14 @@ import com.example.jsontypicodeusers.ui.theme.JsonTypicodeUsersTheme
 
 
 @Composable
-fun UsersScreenRoot(modifier: Modifier = Modifier, onMenuOpen: () -> Unit) {
+fun UsersScreenRoot(modifier: Modifier = Modifier, onMenuOpen: () -> Unit, onNavigate: () -> Unit) {
     val vm = viewModel<UsersViewModel>(factory = UsersViewModel.createFactory())
     val state by vm.state.collectAsStateWithLifecycle()
     //val state = vm.state.collectAsStateWithLifecycle().value
 
     UsersScreen(state = state, onMenuOpen = onMenuOpen, onRemoveUser = { userId ->
         vm.deleteUser(userId)
-    })
+    }, onNavigate = onNavigate)
 
 
 }
@@ -65,11 +65,14 @@ fun UsersScreen(
     modifier: Modifier = Modifier,
     state: UsersState,
     onMenuOpen: () -> Unit,
-    onRemoveUser: (Int) -> Unit
+    onRemoveUser: (Int) -> Unit,
+    onNavigate : () -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = {}) {
+            FloatingActionButton(onClick = {
+                onNavigate()
+            }) {
                 Icon(Icons.Default.Add, "")
             }
         },
@@ -189,7 +192,7 @@ fun UserCard(
 @Composable
 private fun UsersScreenPreview() {
     JsonTypicodeUsersTheme {
-        UsersScreen(state = UsersState(), onMenuOpen = {}, onRemoveUser = {})
+        UsersScreen(state = UsersState(), onMenuOpen = {}, onRemoveUser = {}, onNavigate = {})
     }
 }
 

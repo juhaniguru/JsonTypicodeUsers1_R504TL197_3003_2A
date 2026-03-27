@@ -29,6 +29,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -77,7 +78,7 @@ class MainActivity : ComponentActivity() {
                                         launchSingleTop = true
                                     }
                                 },
-                                selected = currentDestination?.route == "users"
+                                selected = currentDestination?.hierarchy?.any { it.route == "users_feature" } == true
                             )
                         }
                     }, drawerState = drawerState
@@ -91,20 +92,26 @@ class MainActivity : ComponentActivity() {
                         navigation(startDestination = "users", route = "users_feature") {
 
                             composable("users") {
-                                val vm = it.sharedViewModel<UsersViewModel>(navController, factory = UsersViewModel.createFactory())
+                                val vm = it.sharedViewModel<UsersViewModel>(
+                                    navController,
+                                    factory = UsersViewModel.createFactory()
+                                )
                                 UsersScreenRoot(
                                     vm = vm,
                                     onMenuOpen = {
-                                    scope.launch {
-                                        drawerState.open()
-                                    }
+                                        scope.launch {
+                                            drawerState.open()
+                                        }
 
-                                }, onNavigate = {
-                                    navController.navigate("addUser")
-                                })
+                                    }, onNavigate = {
+                                        navController.navigate("addUser")
+                                    })
                             }
                             composable(route = "addUser") {
-                                val vm = it.sharedViewModel<UsersViewModel>(navController, factory = UsersViewModel.createFactory())
+                                val vm = it.sharedViewModel<UsersViewModel>(
+                                    navController,
+                                    factory = UsersViewModel.createFactory()
+                                )
                                 AddUserScreenRoot(onBackClick = {
                                     navController.navigateUp()
                                 }, goBack = {

@@ -41,11 +41,16 @@ import com.example.jsontypicodeusers.R
 // AddUserScreen
 
 @Composable
-fun AddUserScreenRoot(modifier: Modifier = Modifier, onBackClick: () -> Unit, goBack: () -> Unit) {
+fun AddUserScreenRoot(
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit,
+    goBack: () -> Unit,
+    viewmodel: UsersViewModel
+) {
     // meiltä puuttuu vielä viewmodelista sopiva data class, jossa käsitellään tämän screenin tilaa
 
     // nyt samasta viewmodelista tehdään toinen instanssi
-    val viewmodel = viewModel<UsersViewModel>(factory = UsersViewModel.createFactory())
+
 
     val state by viewmodel.addUserState.collectAsStateWithLifecycle()
 
@@ -53,7 +58,10 @@ fun AddUserScreenRoot(modifier: Modifier = Modifier, onBackClick: () -> Unit, go
         viewmodel.updateEmail(it)
     }, onUserCreate = {
         viewmodel.createUser()
-    }, goBack = goBack)
+    }, goBack = {
+        goBack()
+        viewmodel.setIsDone(false)
+    })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,13 +71,13 @@ fun AddUserScreen(
     state: AddUserState,
     onEmailChange: (String) -> Unit,
     onUserCreate: () -> Unit,
-    goBack : () -> Unit
+    goBack: () -> Unit
 ) {
 
     LaunchedEffect(state.isDone) {
-        Log.d("juhanitestaa::LaunchedEffect", "ulkona")
-        if(state.isDone) {
-            Log.d("juhanitestaa::LaunchedEffect", "sisällä")
+
+        if (state.isDone) {
+
             goBack()
         }
     }

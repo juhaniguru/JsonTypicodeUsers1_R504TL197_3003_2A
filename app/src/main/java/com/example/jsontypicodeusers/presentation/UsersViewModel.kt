@@ -63,19 +63,24 @@ class UsersViewModel(private val api: JsonTypiCodeAPI) : ViewModel() {
         }
     }
 
-    // TODO: navigoi takaisin usersScreeniin onnistuneen käyttäjän lisäyksen jälkeen
+
     fun createUser() {
 
         try {
             _addUserState.update { currentState -> currentState.copy(isAdding = true) }
             viewModelScope.launch {
                 val newUser = api.createUser(AddUserReq(email = addUserState.value.email))
+
                 _state.update { currentState ->
                     currentState.copy(
-                        items = state.value.items + newUser
+                        items = state.value.items + User(
+                            id = (11..10000).random(),
+                            email = newUser.email
+                        )
                     )
                 }
-                _addUserState.update { currentState -> currentState.copy(isDone = true) }
+                setIsDone(true)
+                _addUserState.update { currentState -> currentState.copy(email = "") }
 
             }
         } catch (e: Exception) {
@@ -84,6 +89,10 @@ class UsersViewModel(private val api: JsonTypiCodeAPI) : ViewModel() {
         }
     }
 
+
+    fun setIsDone(isDone: Boolean) {
+        _addUserState.update { currentState -> currentState.copy(isDone = isDone) }
+    }
 
     fun getAllUsers() {
         viewModelScope.launch {

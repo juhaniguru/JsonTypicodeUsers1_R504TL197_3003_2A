@@ -47,8 +47,13 @@ import com.example.jsontypicodeusers.ui.theme.JsonTypicodeUsersTheme
 
 
 @Composable
-fun UsersScreenRoot(modifier: Modifier = Modifier, onMenuOpen: () -> Unit, onNavigate: () -> Unit) {
-    val vm = viewModel<UsersViewModel>(factory = UsersViewModel.createFactory())
+fun UsersScreenRoot(
+    modifier: Modifier = Modifier,
+    onMenuOpen: () -> Unit,
+    onNavigate: () -> Unit,
+    vm: UsersViewModel
+) {
+
     val state by vm.state.collectAsStateWithLifecycle()
     //val state = vm.state.collectAsStateWithLifecycle().value
 
@@ -66,7 +71,7 @@ fun UsersScreen(
     state: UsersState,
     onMenuOpen: () -> Unit,
     onRemoveUser: (Int) -> Unit,
-    onNavigate : () -> Unit
+    onNavigate: () -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
@@ -78,21 +83,21 @@ fun UsersScreen(
         },
         floatingActionButtonPosition = FabPosition.Center,
         topBar = {
-        TopAppBar(
-            navigationIcon = {
-                IconButton(onClick = {
-                    onMenuOpen()
-                }) {
-                    Icon(
-                        Icons.Default.Menu,
-                        contentDescription = stringResource(R.string.open_menu)
-                    )
-                }
-            },
-            title = {
-                Text(stringResource(R.string.users))
-            })
-    }) { paddingValues ->
+            TopAppBar(
+                navigationIcon = {
+                    IconButton(onClick = {
+                        onMenuOpen()
+                    }) {
+                        Icon(
+                            Icons.Default.Menu,
+                            contentDescription = stringResource(R.string.open_menu)
+                        )
+                    }
+                },
+                title = {
+                    Text(stringResource(R.string.users))
+                })
+        }) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -118,9 +123,10 @@ fun UsersList(modifier: Modifier = Modifier, users: List<User>, onRemoveUser: (I
             Box(
                 modifier = Modifier.animateItem(
                     fadeOutSpec = tween(300),
-                    placementSpec = spring(stiffness = Spring.StiffnessLow))
-                ) {
-                UserCard(user=user, onRemoveUser = onRemoveUser)
+                    placementSpec = spring(stiffness = Spring.StiffnessLow)
+                )
+            ) {
+                UserCard(user = user, onRemoveUser = onRemoveUser)
             }
 
         }

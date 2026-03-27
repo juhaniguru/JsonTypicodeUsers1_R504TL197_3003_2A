@@ -19,16 +19,24 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import com.example.jsontypicodeusers.presentation.AddUserScreenRoot
 import com.example.jsontypicodeusers.presentation.UsersScreenRoot
+import com.example.jsontypicodeusers.presentation.UsersViewModel
 import com.example.jsontypicodeusers.ui.theme.JsonTypicodeUsersTheme
 import kotlinx.coroutines.launch
 
@@ -77,30 +85,74 @@ class MainActivity : ComponentActivity() {
                     NavHost(
                         navController = navController,
 
-                        startDestination = "users",
+                        startDestination = "users_feature",
 
                         ) {
-                        composable("users") {
-                            UsersScreenRoot(onMenuOpen = {
-                                scope.launch {
-                                    drawerState.open()
-                                }
+                        navigation(startDestination = "users", route = "users_feature") {
 
-                            }, onNavigate = {
-                                navController.navigate("addUser")
-                            })
-                        }
-                        composable(route = "addUser") {
-                            AddUserScreenRoot(onBackClick = {
-                                navController.navigateUp()
-                            }, goBack = {
-                                navController.navigateUp()
-                            })
+                            composable("users") {
+                                val vm = it.sharedViewModel<UsersViewModel>(navController, factory = UsersViewModel.createFactory())
+                                UsersScreenRoot(
+                                    vm = vm,
+                                    onMenuOpen = {
+                                    scope.launch {
+                                        drawerState.open()
+                                    }
+
+                                }, onNavigate = {
+                                    navController.navigate("addUser")
+                                })
+                            }
+                            composable(route = "addUser") {
+                                val vm = it.sharedViewModel<UsersViewModel>(navController, factory = UsersViewModel.createFactory())
+                                AddUserScreenRoot(onBackClick = {
+                                    navController.navigateUp()
+                                }, goBack = {
+                                    navController.navigateUp()
+                                }, viewmodel = vm)
+                            }
                         }
                     }
                 }
             }
         }
     }
+}
+
+
+@Composable
+
+// inline: inline tarkoittaa, että JVM (Java Virtual Machine),
+// jonka päällä Kotlin pyörii käytännössä kopioi tämän funktion joka paikkaan
+// sinne, missä sitä kutsutaan
+
+// reified: tämä tarkoittaa sitä, että kun JVM inlinettää funktion sinne, missä sitä kutsutaan
+// samalla se korvaa T:n (geneerinen tyyppi)
+// sillä viewmodel classilla, joka kutsussa on määritetty
+// eli esim. nav.sharedViewModel<UsersViewModel>(factory = ...)
+// T:stä tulee UsersViewModel
+
+
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
+    navController: NavHostController,
+    factory: ViewModelProvider.Factory? = null
+): T {
+    // navBackStackEntry destination.parent voi olla null
+    // jos se on null, se tarkoittaa, ettei route ei ole osa subnavigationgraphia
+    // vaan yksinäinen route (ilman parentia)
+
+    // voidaan luoda viewmodelista instanssi viewmodelStoreOwnerilla null
+    // jolloin viewmodel kiinnittyy kyseiseen routeen
+    val navGraphRoute = destination.parent?.route ?: return viewModel(factory = factory)
+
+    // jos route on osa subnavigationgraphia
+    // sillä on parent, parentEntry on subnavigationgraphin juuri
+
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+
+    // kiinnitetään viewmodel instanssi parentrouteen
+    return viewModel(viewModelStoreOwner = parentEntry, factory = factory)
 }
 

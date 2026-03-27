@@ -1,5 +1,6 @@
 package com.example.jsontypicodeusers.presentation
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,7 +41,7 @@ import com.example.jsontypicodeusers.R
 // AddUserScreen
 
 @Composable
-fun AddUserScreenRoot(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
+fun AddUserScreenRoot(modifier: Modifier = Modifier, onBackClick: () -> Unit, goBack: () -> Unit) {
     // meiltä puuttuu vielä viewmodelista sopiva data class, jossa käsitellään tämän screenin tilaa
 
     // nyt samasta viewmodelista tehdään toinen instanssi
@@ -51,7 +53,7 @@ fun AddUserScreenRoot(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
         viewmodel.updateEmail(it)
     }, onUserCreate = {
         viewmodel.createUser()
-    })
+    }, goBack = goBack)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,8 +62,18 @@ fun AddUserScreen(
     onBackClick: () -> Unit,
     state: AddUserState,
     onEmailChange: (String) -> Unit,
-    onUserCreate: () -> Unit
+    onUserCreate: () -> Unit,
+    goBack : () -> Unit
 ) {
+
+    LaunchedEffect(state.isDone) {
+        Log.d("juhanitestaa::LaunchedEffect", "ulkona")
+        if(state.isDone) {
+            Log.d("juhanitestaa::LaunchedEffect", "sisällä")
+            goBack()
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -121,8 +133,3 @@ fun AddUserScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun AddUserScreenPreview() {
-    AddUserScreen(onBackClick = {}, state = AddUserState(), onEmailChange = {}, onUserCreate = {})
-}

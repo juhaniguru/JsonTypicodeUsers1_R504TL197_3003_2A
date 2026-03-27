@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigation.NavController
 import com.example.jsontypicodeusers.domain.JsonTypiCodeAPI
 import com.example.jsontypicodeusers.domain.typiCodeService
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +37,11 @@ class UsersViewModel(private val api: JsonTypiCodeAPI) : ViewModel() {
     init {
         Log.d("juhanitestaa", "UsersViewModel::${hashCode()}")
         getAllUsers()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("juhanitestaa::onCleared", "tuhotaan")
     }
 
     fun updateEmail(newEmail: String) {
@@ -69,6 +75,8 @@ class UsersViewModel(private val api: JsonTypiCodeAPI) : ViewModel() {
                         items = state.value.items + newUser
                     )
                 }
+                _addUserState.update { currentState -> currentState.copy(isDone = true) }
+
             }
         } catch (e: Exception) {
         } finally {
